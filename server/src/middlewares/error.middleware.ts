@@ -22,10 +22,7 @@ export function errorMiddleware(
 
   if (error instanceof AppError) {
     // Expected failures are the API working correctly, so they log at debug.
-    logger.debug(
-      { err: error, requestId: req.requestId, path: req.path },
-      'request rejected',
-    );
+    logger.debug({ err: error, requestId: req.requestId, path: req.path }, 'request rejected');
 
     res.status(error.statusCode).json({
       error: {

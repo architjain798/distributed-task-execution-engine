@@ -49,7 +49,9 @@ export function useTaskStream(): void {
 
     for (const type of EVENT_TYPES) {
       source.addEventListener(type, (message) => {
-        const parsed = serverEventSchema.safeParse(JSON.parse((message as MessageEvent<string>).data));
+        const parsed = serverEventSchema.safeParse(
+          JSON.parse((message as MessageEvent<string>).data),
+        );
         if (!parsed.success) return;
 
         useTaskStore.getState().applyEvent(parsed.data);

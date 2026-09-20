@@ -124,7 +124,11 @@ export class TaskExecutor {
   }
 
   private async retry(row: TaskRow, reason: string): Promise<void> {
-    await this.deps.recovery.retryOrDeadLetter(row, reason, backoffMs(row.attempts, BACKOFF_BASE_MS));
+    await this.deps.recovery.retryOrDeadLetter(
+      row,
+      reason,
+      backoffMs(row.attempts, BACKOFF_BASE_MS),
+    );
   }
 
   private renewLeases(): void {

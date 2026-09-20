@@ -8,8 +8,11 @@ import type { RedisClient } from '../lib/redis.js';
  */
 export function createHealthController(db: Database, redis: RedisClient) {
   return {
-    async check(_req: Request, res: Response): Promise<void> {
-      const [mysql, cache] = await Promise.all([ping(() => db.query('SELECT 1')), ping(() => redis.ping())]);
+    check: async (_req: Request, res: Response): Promise<void> => {
+      const [mysql, cache] = await Promise.all([
+        ping(() => db.query('SELECT 1')),
+        ping(() => redis.ping()),
+      ]);
 
       const healthy = mysql && cache;
       res.status(healthy ? 200 : 503).json({

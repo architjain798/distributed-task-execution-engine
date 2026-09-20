@@ -22,9 +22,9 @@ interface TaskState {
   connected: boolean;
   hydrated: boolean;
 
-  hydrate(dashboard: Dashboard): void;
-  applyEvent(event: ServerEvent): void;
-  setConnected(connected: boolean): void;
+  hydrate: (dashboard: Dashboard) => void;
+  applyEvent: (event: ServerEvent) => void;
+  setConnected: (connected: boolean) => void;
 }
 
 export const useTaskStore = create<TaskState>((set) => ({
@@ -33,7 +33,7 @@ export const useTaskStore = create<TaskState>((set) => ({
   connected: false,
   hydrated: false,
 
-  hydrate(dashboard) {
+  hydrate: (dashboard) => {
     set({
       tasks: new Map(dashboard.tasks.map((task) => [task.id, task])),
       workers: dashboard.workers,
@@ -41,7 +41,7 @@ export const useTaskStore = create<TaskState>((set) => ({
     });
   },
 
-  applyEvent(event) {
+  applyEvent: (event) => {
     set((state) => {
       switch (event.type) {
         case 'workers.stats':
@@ -68,7 +68,7 @@ export const useTaskStore = create<TaskState>((set) => ({
     });
   },
 
-  setConnected(connected) {
+  setConnected: (connected) => {
     // Worker stats are left alone: losing the event stream says nothing about
     // whether the worker process is alive, and the snapshot refetch on reconnect
     // will correct them.
@@ -108,7 +108,7 @@ export function groupByStatus(tasks: Map<string, Task>): Record<TaskStatus, Task
     groups[status]?.sort((a, b) => (b.finishedAt ?? '').localeCompare(a.finishedAt ?? ''));
   }
 
-  return groups as Record<TaskStatus, Task[]>;
+  return groups;
 }
 
 /** Mirrors the server's queue ordering, so the UI shows what will run next. */

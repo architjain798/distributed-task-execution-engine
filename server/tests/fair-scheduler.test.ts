@@ -21,11 +21,8 @@ describe('FairScheduler', () => {
     return picked;
   }
 
-  function countBy(picks: string[]): Record<string, number> {
-    return picks.reduce<Record<string, number>>((counts, pick) => {
-      counts[pick] = (counts[pick] ?? 0) + 1;
-      return counts;
-    }, {});
+  function countOf(picks: string[], clientId: string): number {
+    return picks.filter((pick) => pick === clientId).length;
   }
 
   it('gives a flooding client no more than its share', () => {
@@ -33,10 +30,9 @@ describe('FairScheduler', () => {
     // Both clients have work; acme is assumed to have submitted hundreds of
     // priority-5 tasks and globex just one or two.
     const picks = dispatch(scheduler, [ACME, GLOBEX], 20);
-    const counts = countBy(picks);
 
-    expect(counts[ACME]).toBe(10);
-    expect(counts[GLOBEX]).toBe(10);
+    expect(countOf(picks, ACME)).toBe(10);
+    expect(countOf(picks, GLOBEX)).toBe(10);
   });
 
   it('starts a second client within one round of a flood', () => {
@@ -54,20 +50,20 @@ describe('FairScheduler', () => {
     const scheduler = new FairScheduler();
     scheduler.setWeights(new Map([[INITECH, 2]]));
 
-    const counts = countBy(dispatch(scheduler, [ACME, INITECH], 300));
+    const picks = dispatch(scheduler, [ACME, INITECH], 300);
 
     // Exactly 2:1 in the steady state; allow a little slack for where the
     // window happens to cut the rotation.
-    expect(counts[INITECH] / (counts[ACME] as number)).toBeCloseTo(2, 1);
+    expect(countOf(picks, INITECH) / countOf(picks, ACME)).toBeCloseTo(2, 1);
   });
 
   it('carries fractional weight forward instead of rounding it away', () => {
     const scheduler = new FairScheduler();
     scheduler.setWeights(new Map([[INITECH, 2.5]]));
 
-    const counts = countBy(dispatch(scheduler, [ACME, INITECH], 700));
+    const picks = dispatch(scheduler, [ACME, INITECH], 700);
 
-    expect(counts[INITECH] / (counts[ACME] as number)).toBeCloseTo(2.5, 1);
+    expect(countOf(picks, INITECH) / countOf(picks, ACME)).toBeCloseTo(2.5, 1);
   });
 
   it('does not let an idle client bank credit while its queue is empty', () => {
@@ -84,7 +80,7 @@ describe('FairScheduler', () => {
     const picks = dispatch(scheduler, [ACME, INITECH], 6);
 
     // It gets its weighted share going forward, not a burst of back pay.
-    expect(countBy(picks)[INITECH]).toBeLessThanOrEqual(4);
+    expect(countOf(picks, INITECH)).toBeLessThanOrEqual(4);
   });
 
   it('rotates through every active client', () => {

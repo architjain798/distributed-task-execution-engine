@@ -3,14 +3,14 @@ import type { PaginatedTasks } from '@task-engine/shared';
 import { apiFetch, buildQuery } from '../../../lib/api-client';
 import { queryKeys } from '../../../lib/react-query';
 
-export interface TaskListFilters {
+export type TaskListFilters = {
   status?: string;
   type?: string;
   priority?: number;
   search?: string;
   page: number;
   pageSize: number;
-}
+};
 
 /**
  * Server-side filtering and pagination. Deliberately not the live store: this

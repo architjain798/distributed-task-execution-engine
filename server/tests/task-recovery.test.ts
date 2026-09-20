@@ -10,7 +10,9 @@ import type { TaskRepository, TaskRow } from '../src/repositories/task.repositor
  * becomes. The lease reaper and the worker pool both route through this, so
  * these assertions cover every path into the dead letter queue.
  */
-function taskRow(overrides: Partial<TaskRow> = {}): TaskRow {
+type TaskRowOverrides = Partial<Omit<TaskRow, 'constructor'>>;
+
+function taskRow(overrides: TaskRowOverrides = {}): TaskRow {
   return {
     id: 'task-1',
     client_id: 'client-a',
@@ -34,7 +36,10 @@ function taskRow(overrides: Partial<TaskRow> = {}): TaskRow {
 }
 
 describe('TaskRecovery', () => {
-  let tasks: { markTerminalFailure: ReturnType<typeof vi.fn>; releaseForRetry: ReturnType<typeof vi.fn> };
+  let tasks: {
+    markTerminalFailure: ReturnType<typeof vi.fn>;
+    releaseForRetry: ReturnType<typeof vi.fn>;
+  };
   let readyQueue: { enqueue: ReturnType<typeof vi.fn> };
   let progress: { clear: ReturnType<typeof vi.fn> };
   let events: { publishEvent: ReturnType<typeof vi.fn> };
@@ -43,12 +48,14 @@ describe('TaskRecovery', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     tasks = {
-      markTerminalFailure: vi.fn(async (id: string, status: string) => taskRow({ id, status } as never)),
-      releaseForRetry: vi.fn(async (id: string) => taskRow({ id, status: 'queued' })),
+      markTerminalFailure: vi.fn((id: string, status: string) =>
+        Promise.resolve(taskRow({ id, status })),
+      ),
+      releaseForRetry: vi.fn((id: string) => Promise.resolve(taskRow({ id, status: 'queued' }))),
     };
-    readyQueue = { enqueue: vi.fn(async () => undefined) };
-    progress = { clear: vi.fn(async () => undefined) };
-    events = { publishEvent: vi.fn(async () => undefined) };
+    readyQueue = { enqueue: vi.fn(() => Promise.resolve()) };
+    progress = { clear: vi.fn(() => Promise.resolve()) };
+    events = { publishEvent: vi.fn(() => Promise.resolve()) };
 
     recovery = new TaskRecovery(
       tasks as unknown as TaskRepository,
@@ -71,7 +78,11 @@ describe('TaskRecovery', () => {
   it('dead-letters once the attempts are exhausted', async () => {
     await recovery.retryOrDeadLetter(taskRow({ attempts: 4, max_attempts: 4 }), 'crashed again', 0);
 
-    expect(tasks.markTerminalFailure).toHaveBeenCalledWith('task-1', 'dead_letter', 'crashed again');
+    expect(tasks.markTerminalFailure).toHaveBeenCalledWith(
+      'task-1',
+      'dead_letter',
+      'crashed again',
+    );
     expect(tasks.releaseForRetry).not.toHaveBeenCalled();
     expect(readyQueue.enqueue).not.toHaveBeenCalled();
   });

@@ -5,7 +5,7 @@ const STORAGE_KEY = 'task-engine.api-key';
 
 interface ApiKeyState {
   apiKey: string;
-  setApiKey(apiKey: string): void;
+  setApiKey: (apiKey: string) => void;
 }
 
 /**
@@ -15,7 +15,7 @@ interface ApiKeyState {
  */
 export const useApiKeyStore = create<ApiKeyState>((set) => ({
   apiKey: readStoredKey(),
-  setApiKey(apiKey) {
+  setApiKey: (apiKey) => {
     set({ apiKey });
     writeStoredKey(apiKey);
   },

@@ -43,7 +43,10 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
   return response.json() as Promise<T>;
 }
 
-export function buildQuery(params: Record<string, unknown>): string {
+/** Anything that has a sensible single-value string form. */
+type QueryValue = string | number | boolean | null | undefined;
+
+export function buildQuery(params: Record<string, QueryValue>): string {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
     if (value !== undefined && value !== null && value !== '') search.set(key, String(value));

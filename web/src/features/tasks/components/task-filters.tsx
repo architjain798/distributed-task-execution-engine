@@ -4,7 +4,7 @@ import type { TaskListFilters } from '../api/get-tasks';
 
 interface Props {
   filters: TaskListFilters;
-  onChange(next: Partial<TaskListFilters>): void;
+  onChange: (next: Partial<TaskListFilters>) => void;
 }
 
 export function TaskFilters({ filters, onChange }: Props) {
@@ -62,7 +62,9 @@ export function TaskFilters({ filters, onChange }: Props) {
           className="select"
           value={filters.priority ?? ''}
           onChange={(event) =>
-            onChange({ priority: event.target.value === '' ? undefined : Number(event.target.value) })
+            onChange({
+              priority: event.target.value === '' ? undefined : Number(event.target.value),
+            })
           }
         >
           <option value="">All</option>

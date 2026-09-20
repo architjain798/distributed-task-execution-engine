@@ -68,7 +68,7 @@ export class FakeRedis {
         results.push([null, this.pexpire()]);
         return chain;
       },
-      exec: async () => results,
+      exec: () => Promise.resolve(results),
     };
     return chain;
   }

@@ -11,32 +11,32 @@ import type { TaskService } from '../services/task.service.js';
  */
 export function createTaskController(tasks: TaskService) {
   return {
-    async create(req: Request, res: Response): Promise<void> {
+    create: async (req: Request, res: Response): Promise<void> => {
       const client = requireClient(req);
       const input = validated<CreateTaskInput>(req, 'body');
       res.status(201).json(await tasks.create(client, input));
     },
 
-    async list(req: Request, res: Response): Promise<void> {
+    list: async (req: Request, res: Response): Promise<void> => {
       res.json(await tasks.list(validated<TaskFilter>(req, 'query')));
     },
 
-    async getById(req: Request, res: Response): Promise<void> {
+    getById: async (req: Request, res: Response): Promise<void> => {
       const { id } = validated<TaskIdParams>(req, 'params');
       res.json(await tasks.getById(id));
     },
 
-    async cancel(req: Request, res: Response): Promise<void> {
+    cancel: async (req: Request, res: Response): Promise<void> => {
       const { id } = validated<TaskIdParams>(req, 'params');
       res.json(await tasks.cancel(id));
     },
 
-    async retry(req: Request, res: Response): Promise<void> {
+    retry: async (req: Request, res: Response): Promise<void> => {
       const { id } = validated<TaskIdParams>(req, 'params');
       res.json(await tasks.retry(id));
     },
 
-    async dashboard(_req: Request, res: Response): Promise<void> {
+    dashboard: async (_req: Request, res: Response): Promise<void> => {
       res.json(await tasks.dashboard());
     },
   };

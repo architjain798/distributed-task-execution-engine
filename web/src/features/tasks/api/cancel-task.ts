@@ -6,8 +6,7 @@ export function useCancelTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (taskId: string) =>
-      apiFetch<Task>(`/tasks/${taskId}/cancel`, { method: 'POST' }),
+    mutationFn: (taskId: string) => apiFetch<Task>(`/tasks/${taskId}/cancel`, { method: 'POST' }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
   });
 }

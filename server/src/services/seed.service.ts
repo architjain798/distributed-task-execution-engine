@@ -68,7 +68,12 @@ function buildPayload(type: string, index: number): Record<string, unknown> {
 
   switch (type) {
     case 'image-processing':
-      return { ...base, imageUrl: `https://example.test/photo-${index}.jpg`, width: 1920, height: 1080 };
+      return {
+        ...base,
+        imageUrl: `https://example.test/photo-${index}.jpg`,
+        width: 1920,
+        height: 1080,
+      };
     case 'report-generation':
       return { ...base, reportType: index % 2 === 0 ? 'monthly' : 'weekly', rangeDays: 30 };
     case 'data-import':

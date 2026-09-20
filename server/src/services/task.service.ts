@@ -14,7 +14,12 @@ import type { ProgressStore } from '../lib/progress-store.js';
 import type { RedisClient } from '../lib/redis.js';
 import { redisKeys } from '../lib/redis-keys.js';
 import type { ClientRecord } from '../repositories/client.repository.js';
-import { progressFor, toTask, type TaskRepository, type TaskRow } from '../repositories/task.repository.js';
+import {
+  progressFor,
+  toTask,
+  type TaskRepository,
+  type TaskRow,
+} from '../repositories/task.repository.js';
 import type { ReadyQueue } from '../engine/ready-queue.js';
 import { validatePayload } from '../engine/task-type.registry.js';
 import type { EventBus } from '../events/event-bus.js';
@@ -141,7 +146,9 @@ export class TaskService {
     const row = await this.tasks.findById(id);
     if (row === null) throw new NotFoundError('Task', id);
     if (row.status !== 'dead_letter') {
-      throw new ConflictError(`Only dead-lettered tasks can be retried; task ${id} is ${row.status}`);
+      throw new ConflictError(
+        `Only dead-lettered tasks can be retried; task ${id} is ${row.status}`,
+      );
     }
 
     const reset = await this.tasks.resetForManualRetry(id);

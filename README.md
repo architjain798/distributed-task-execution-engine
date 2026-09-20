@@ -402,10 +402,38 @@ docker compose up -d mysql redis
 npm run dev:api        # :3000
 npm run dev:worker
 npm run dev:web        # :5173, proxies /api to :3000
+```
 
+### Checks
+
+```bash
+npm run check          # typecheck + lint + format:check + test, in that order
+
+npm run typecheck      # tsc --noEmit across all three workspaces, tests included
+npm run lint           # eslint
+npm run lint:fix       # eslint --fix
+npm run format         # prettier --write
 npm test               # 24 unit tests
 npm run seed           # same service the seed endpoint uses
 ```
+
+ESLint is type-aware (`recommendedTypeChecked`), so `no-floating-promises` and
+`no-misused-promises` actually apply — worth having in a codebase full of timers, worker threads and
+background sweeps.
+
+It also enforces the two architectural boundaries this README describes, rather than leaving them to
+discipline:
+
+- **Server layering.** Repositories cannot import services, services cannot import controllers or
+  routes, and nothing below the controllers may import `express`. Put a file in the wrong folder and
+  the lint fails.
+- **Frontend feature isolation.** `features/tasks`, `features/analytics` and `features/workers`
+  cannot import from one another, and shared `components/` cannot import from any feature. Features
+  are composed at the app layer.
+
+Each workspace has two TypeScript configs: `tsconfig.json` checks everything including tests and
+emits nothing, and `tsconfig.build.json` emits `dist/` from `src` only. The editor, ESLint and
+`typecheck` all resolve to the first; only `npm run build` uses the second.
 
 ### Tests
 

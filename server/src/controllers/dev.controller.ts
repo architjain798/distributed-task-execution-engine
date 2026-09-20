@@ -16,7 +16,7 @@ export function createDevController(
   events: EventBus,
 ) {
   return {
-    async seed(_req: Request, res: Response): Promise<void> {
+    seed: async (_req: Request, res: Response): Promise<void> => {
       res.status(201).json(await seed.seed());
     },
 
@@ -24,13 +24,13 @@ export function createDevController(
      * The worker threads live in the other container, so this asks rather than
      * acts — hence 202 and no task id in the response.
      */
-    async killWorker(_req: Request, res: Response): Promise<void> {
+    killWorker: async (_req: Request, res: Response): Promise<void> => {
       await events.publishControl({ type: 'worker.kill' });
       res.status(202).json({ message: 'Kill signal sent to the worker process' });
     },
 
     /** Lets the UI offer an API key picker so fairness can be demonstrated. */
-    async listClients(_req: Request, res: Response): Promise<void> {
+    listClients: async (_req: Request, res: Response): Promise<void> => {
       res.json(await clients.findAll());
     },
   };

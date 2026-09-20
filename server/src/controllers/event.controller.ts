@@ -11,7 +11,7 @@ import type { SseHub } from '../events/sse-hub.js';
  */
 export function createEventController(hub: SseHub) {
   return {
-    stream(req: Request, res: Response): void {
+    stream: (req: Request, res: Response): void => {
       res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         // no-transform stops intermediaries buffering or gzipping the stream,

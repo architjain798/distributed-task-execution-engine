@@ -5,7 +5,7 @@ import type { AnalyticsService } from '../services/analytics.service.js';
 
 export function createAnalyticsController(analytics: AnalyticsService) {
   return {
-    async summary(req: Request, res: Response): Promise<void> {
+    summary: async (req: Request, res: Response): Promise<void> => {
       const { minutes } = validated<AnalyticsQuery>(req, 'query');
       res.json(await analytics.summary(minutes));
     },

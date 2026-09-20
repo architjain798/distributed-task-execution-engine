@@ -88,11 +88,7 @@ export class ReadyQueue {
 
   /** Highest priority, oldest first. Null when the client has nothing waiting. */
   async pop(clientId: string): Promise<string | null> {
-    return this.redis.popReadyTask(
-      redisKeys.queue(clientId),
-      redisKeys.activeClients,
-      clientId,
-    );
+    return this.redis.popReadyTask(redisKeys.queue(clientId), redisKeys.activeClients, clientId);
   }
 
   /** Cancelling a queued task. Returns false if the dispatcher already took it. */
