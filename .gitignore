@@ -9,3 +9,6 @@ Tech-Take-Home-assignment.pdf
 
 # Internal working document used while designing the system.
 PLAN.md
+
+# TypeScript incremental build cache
+*.tsbuildinfo
