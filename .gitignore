@@ -1,14 +1,20 @@
+# Dependencies and build output
 node_modules/
 dist/
+*.tsbuildinfo
+coverage/
+
+# Local environment. .env.example is committed; real values never are.
 .env
-*.log
+.env.local
+.env.*.local
+
+# OS and editor noise
 .DS_Store
+*.log
 
 # The assignment brief is the company's material, not mine to republish.
 Tech-Take-Home-assignment.pdf
 
 # Internal working document used while designing the system.
 PLAN.md
-
-# TypeScript incremental build cache
-*.tsbuildinfo
