@@ -1,0 +1,25 @@
+{
+  "name": "distributed-task-execution",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "server",
+    "web"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "npm run build -w @task-engine/shared && npm run build -w @task-engine/server && npm run build -w @task-engine/web",
+    "dev:api": "npm run dev:api -w @task-engine/server",
+    "dev:worker": "npm run dev:worker -w @task-engine/server",
+    "dev:web": "npm run dev -w @task-engine/web",
+    "test": "npm run test -w @task-engine/server",
+    "seed": "npm run seed -w @task-engine/server",
+    "lint": "npm run lint -w @task-engine/server && npm run lint -w @task-engine/web",
+    "up": "docker compose up --build",
+    "down": "docker compose down -v"
+  }
+}

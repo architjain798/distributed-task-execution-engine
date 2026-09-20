@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+
+# The assignment brief is the company's material, not mine to republish.
+Tech-Take-Home-assignment.pdf
+
+# Internal working document used while designing the system.
+PLAN.md
